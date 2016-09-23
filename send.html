@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>three.js webgl - geometry - cube</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+        margin: 0px;
+        background-color: #ffffff;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <center style="margin-top:100px;">
+    <input style="color:blue; font-size:40px;" type="button" value="Recaliberate" onClick="javscript:recaliberate();"></input>
+    </center>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+  
+    <script>
+
+
+      var gamma, beta, alpha, initialAlpha, initialBeta, initialGamma, currentGamma, currentBeta, currentAlpha;
+      var socket = io();
+
+      function recaliberate() {
+
+        initialAlpha = currentAlpha;
+        initialBeta = currentBeta;
+        initialGamma = currentGamma;
+
+      }
+      
+
+      if (window.DeviceOrientationEvent) {
+
+//document.getElementById("doEvent").innerHTML = "DeviceOrientation";
+// Listen for the deviceorientation event and handle the raw data
+window.addEventListener('deviceorientation', function(eventData) {
+// gamma is the left-to-right tilt in degrees, where right is positive
+
+//alert(eventData.gamma);
+currentGamma = eventData.gamma;
+gamma = currentGamma - initialGamma;
+gamma = Math.round(gamma*100)/100;
+//document.getElementById('notes').innerHTML=eventData.gamma;
+// beta is the front-to-back tilt in degrees, where front is positive
+currentBeta =  eventData.beta;
+beta = currentBeta - initialGamma;
+beta = Math.round(beta*100)/100;
+// alpha is the compass direction the device is facing in degrees
+currentAlpha = eventData.alpha;
+alpha = currentAlpha- initialAlpha;
+alpha = Math.round(alpha*100)/100;
+// call our orientation event handler
+deviceOrientationHandler(gamma, beta, alpha);
+}, false);
+} else {
+document.getElementById("doEvent").innerHTML = "Not supported."
+}
+
+function deviceOrientationHandler(gamma, beta, alpha) {
+var orientation='{"alpha":'+alpha+',"beta":'+beta+',"gamma":'+gamma+'}';
+
+
+  socket.emit('orientation', orientation);
+//document.getElementById("doTiltLR").innerHTML = Math.round(tiltLR);
+//document.getElementById("doTiltFB").innerHTML = Math.round(tiltFB);
+//document.getElementById("doDirection").innerHTML = Math.round(dir);
+
+// Apply the transform to the image
+//var logo = document.getElementById("imgLogo");
+/*logo.style.webkitTransform =
+  "rotate("+ tiltLR +"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
+  logo.style.MozTransform = "rotate("+ tiltLR +"deg)";
+  logo.style.transform =
+    "rotate("+ tiltLR +"deg) rotate3d(1,0,0, "+ (tiltFB*-1)+"deg)";
+    */
+}
+
+    </script>
+
+
+
+  </body>
+</html>
