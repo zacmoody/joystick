@@ -1,6 +1,5 @@
 //Changed by zacmoody
 // Change made from Windows
-// Change made form Mac
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
